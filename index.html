@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>晚餐选择器</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f5f5f5;
+        }
+
+        .spinner-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-gap: 10px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .spinner-item {
+            width: 100px;
+            height: 100px;
+            background-color: #add8e6;
+            border: 2px solid transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 16px;
+            color: #333;
+            transition: border 0.3s ease;
+        }
+
+        .spinner-item.selected {
+            background-color: #43638d;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div style="text-align: center;">
+            <h2>晚餐选择器</h2>
+        </div>
+        <div class="spinner-container">
+            <div v-for="(item, index) in dishes" :key="index" class="spinner-item"
+                :class="{ selected: selectedIndex === index }">
+                {{ item }}
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <button @click="spin" style="background-color: #4CAF50; color: white;">开始选择</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                selectedIndex: null,
+                rotation: 0,
+                dishes: ['披萨', '汉堡', '寿司', '意大利面', '沙拉', '饺子', '牛排', '印度菜', '中餐'],
+                spinning: false
+            },
+            methods: {
+                spin() {
+                    if (this.spinning) return;
+                    this.clearSelection();
+                    this.spinning = true;
+                    let count = 0;
+                    this.interval = setInterval(() => {
+                        this.selectedIndex = (this.selectedIndex + 1) % this.dishes.length;
+                        count++;
+                        if (count >= this.dishes.length * 2) { // 旋转两圈后停止
+                            this.stopSpinning();
+                        }
+                    }, 100);
+                },
+                stopSpinning() {
+                    if (this.interval) {
+                        clearInterval(this.interval);
+                        this.interval = null;
+                    }
+                    this.spinning = false;
+                    this.selectedIndex = Math.floor(Math.random() * this.dishes.length);
+                },
+                clearSelection() {
+                    this.selectedIndex = null;
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
